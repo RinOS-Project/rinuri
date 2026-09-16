@@ -67,7 +67,8 @@ int rin_uri_host_is(const RinUri* uri, const char* expected);
 
 /* Apply RinOS's stable normalization policy: lowercase scheme/host, collapse
  * separators and remove dot segments from the path, while preserving percent
- * escapes and query/fragment bytes. The result is NUL terminated. */
+ * escapes and query/fragment bytes. The result is NUL terminated; output is
+ * empty on failure when it has writable capacity. */
 int rin_uri_normalize(const char* input, size_t input_size, char* output,
                       size_t output_capacity, size_t* output_size);
 
