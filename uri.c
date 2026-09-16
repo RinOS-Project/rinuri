@@ -79,7 +79,7 @@ static int uri_span_equal_ci(RinUriSpan span, const char* expected)
 {
     size_t index = 0u;
     if (!expected || (span.size != 0u && !span.data)) return 0;
-    while (expected[index] != '\0') {
+    while (index < RIN_URI_MAX_CSTRING_BYTES && expected[index] != '\0') {
         unsigned char left;
         unsigned char right;
         if (index >= span.size) return 0;
@@ -92,6 +92,7 @@ static int uri_span_equal_ci(RinUriSpan span, const char* expected)
         if (left != right) return 0;
         ++index;
     }
+    if (index >= RIN_URI_MAX_CSTRING_BYTES) return 0;
     return index == span.size;
 }
 

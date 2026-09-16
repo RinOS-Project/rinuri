@@ -10,6 +10,9 @@ extern "C" {
 #endif
 
 #define RIN_URI_MAX_BYTES ((size_t)4096u)
+/* C-string comparison helpers scan at most this many bytes and reject input
+ * without a terminating NUL in the window. */
+#define RIN_URI_MAX_CSTRING_BYTES RIN_URI_MAX_BYTES
 
 typedef enum RinUriStatus {
     RIN_URI_OK = 0,
@@ -61,7 +64,9 @@ typedef struct RinUri {
  * are validated but intentionally not decoded by this API. */
 int rin_uri_parse(const char* input, size_t input_size, RinUri* output);
 
-/* Case-insensitive comparisons for the ASCII scheme and host components. */
+/* Case-insensitive comparisons for the ASCII scheme and host components.
+ * `expected` is a caller-owned C string bounded by RIN_URI_MAX_CSTRING_BYTES.
+ */
 int rin_uri_scheme_is(const RinUri* uri, const char* expected);
 int rin_uri_host_is(const RinUri* uri, const char* expected);
 
