@@ -438,6 +438,7 @@ int rin_uri_normalize(const char* input, size_t input_size, char* output,
     if (!output_size || !input || (output_capacity != 0u && !output))
         return RIN_URI_INVALID_ARGUMENT;
     *output_size = 0u;
+    if (output != NULL && output_capacity != 0u) output[0] = '\0';
     if (rin_uri_parse(input, input_size, &uri) != RIN_URI_OK)
         return input_size > RIN_URI_MAX_BYTES ? RIN_URI_TOO_LONG : RIN_URI_MALFORMED;
     if (uri.scheme.size != 0u) {
