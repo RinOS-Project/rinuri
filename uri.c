@@ -119,7 +119,7 @@ static int uri_ipv4_valid(const char* value, size_t size)
     return parts == 4u;
 }
 
-static int uri_ipv6_valid(const char* value, size_t size)
+static int uri_ipv6_address_valid(const char* value, size_t size)
 {
     size_t index = 0u;
     unsigned groups = 0u;
@@ -160,6 +160,35 @@ static int uri_ipv6_valid(const char* value, size_t size)
         }
     }
     return compressed ? groups < 8u : groups == 8u;
+}
+
+static int uri_ipv6_valid(const char* value, size_t size)
+{
+    size_t index;
+    if (!value || size == 0u) return 0;
+    for (index = 0u; index < size; ++index) {
+        if (value[index] == '%') {
+            size_t zone;
+            if (index + 3u >= size || value[index + 1u] != '2' ||
+                value[index + 2u] != '5' ||
+                !uri_ipv6_address_valid(value, index))
+                return 0;
+            for (zone = index + 3u; zone < size; ++zone) {
+                const unsigned char byte = (unsigned char)value[zone];
+                if (byte == '%') {
+                    if (zone + 2u >= size ||
+                        !uri_hex((unsigned char)value[zone + 1u]) ||
+                        !uri_hex((unsigned char)value[zone + 2u]))
+                        return 0;
+                    zone += 2u;
+                } else if (!uri_unreserved(byte)) {
+                    return 0;
+                }
+            }
+            return 1;
+        }
+    }
+    return uri_ipv6_address_valid(value, size);
 }
 
 static int uri_host_valid(const char* value, size_t size,
