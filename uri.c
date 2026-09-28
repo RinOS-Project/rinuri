@@ -133,6 +133,14 @@ static int uri_ipv6_valid(const char* value, size_t size)
     }
     while (index < size) {
         unsigned digits = 0u;
+        if (index != 0u && uri_ipv4_valid(value + index, size - index)) {
+            /* RFC 3986 permits an IPv4address as the final two 16-bit
+             * pieces of an IP-literal. It must be preceded by a colon and
+             * consumes exactly two IPv6 groups. */
+            groups += 2u;
+            index = size;
+            break;
+        }
         while (index < size && uri_hex((unsigned char)value[index])) {
             if (++digits > 4u) return 0;
             ++index;
