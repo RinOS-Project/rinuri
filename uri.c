@@ -228,7 +228,8 @@ static void uri_clear(RinUri* output)
     for (index = 0u; index < sizeof(*output); ++index) bytes[index] = 0u;
 }
 
-int rin_uri_parse(const char* input, size_t input_size, RinUri* output)
+static int uri_parse_internal(const char* input, size_t input_size,
+                              RinUri* output)
 {
     size_t index;
     size_t cursor = 0u;
@@ -369,6 +370,13 @@ int rin_uri_parse(const char* input, size_t input_size, RinUri* output)
                                  1, 1, 1, 0)) return RIN_URI_MALFORMED;
     }
     return RIN_URI_OK;
+}
+
+int rin_uri_parse(const char* input, size_t input_size, RinUri* output)
+{
+    int status = uri_parse_internal(input, input_size, output);
+    if (status != RIN_URI_OK && output != NULL) uri_clear(output);
+    return status;
 }
 
 int rin_uri_scheme_is(const RinUri* uri, const char* expected)

@@ -61,7 +61,8 @@ typedef struct RinUri {
 
 /* Parse an RFC 3986-shaped URI without allocation. Raw non-ASCII bytes are
  * rejected; callers can percent-encode UTF-8 before parsing. Percent escapes
- * are validated but intentionally not decoded by this API. */
+ * are validated but intentionally not decoded by this API. On failure output
+ * is cleared, so no partially parsed URI is published. */
 int rin_uri_parse(const char* input, size_t input_size, RinUri* output);
 
 /* Case-insensitive comparisons for the ASCII scheme and host components.

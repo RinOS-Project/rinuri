@@ -12,7 +12,7 @@ RinURI provides bounded URI parsing and normalization for RinOS components.
 | ownership | Input and output storage are caller-owned. Any returned views follow the lifetimes described by the declarations and must not outlive their source/result storage. |
 | thread-safety | Independent calls on separate buffers may run concurrently. Shared mutable results and buffers require caller synchronization. |
 | limits | URI input is limited to 4096 bytes. Inputs beyond the limit fail parsing. |
-| errors | Invalid syntax, insufficient storage, or over-limit input is reported by the parser's return value. Callers must check it before using components. |
+| errors | Invalid syntax, insufficient storage, or over-limit input is reported by the parser's return value. A failed parse clears the caller-owned `RinUri`, so partial scheme/authority/path views are not published; callers must still check the status before using components. |
 | ABI stability | `rinuri/uri.h` is the public C ABI. No cross-version ABI stability guarantee is published; rebuild consumers when updating the library. |
 | security | A parsed or normalized URI is data, not an authorization decision. Callers must separately apply scheme, host, origin, and network policy before use. |
 | build | Consume the public header through the RinOS build; no separate build/install workflow is documented. |
