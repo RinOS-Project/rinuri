@@ -15,5 +15,6 @@ RinURI provides bounded URI parsing and normalization for RinOS components.
 | errors | Invalid syntax, insufficient storage, or over-limit input is reported by the parser's return value. Percent-escape and IPv6-zone lookahead checks use subtraction bounds before indexing, and a failed parse clears the caller-owned `RinUri`, so partial scheme/authority/path views are not published; callers must still check the status before using components. |
 | ABI stability | `rinuri/uri.h` is the public C ABI. No cross-version ABI stability guarantee is published; rebuild consumers when updating the library. |
 | security | A parsed or normalized URI is data, not an authorization decision. Callers must separately apply scheme, host, origin, and network policy before use. |
+| normalization | Only a final `.` or `..` path segment preserves a trailing separator; ordinary names such as `file.` remain unchanged. |
 | build | Consume the public header through the RinOS build; no separate build/install workflow is documented. |
 | test | No standalone test command is documented. Validate URI policy in the consuming component. |

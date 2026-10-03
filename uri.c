@@ -422,6 +422,25 @@ static int uri_append_normalized_port(char* output, size_t capacity,
                            0);
 }
 
+static int uri_path_has_trailing_separator(RinUriSpan path)
+{
+    size_t last_component_start = 0u;
+    size_t index;
+    size_t component_size;
+    if (path.size == 0u) return 0;
+    if (path.data[path.size - 1u] == '/') return 1;
+    for (index = path.size; index != 0u; --index) {
+        if (path.data[index - 1u] == '/') {
+            last_component_start = index;
+            break;
+        }
+    }
+    component_size = path.size - last_component_start;
+    return (component_size == 1u && path.data[last_component_start] == '.') ||
+           (component_size == 2u && path.data[last_component_start] == '.' &&
+            path.data[last_component_start + 1u] == '.');
+}
+
 static int uri_append_normalized_path(char* output, size_t capacity,
                                       size_t* written, RinUriSpan path)
 {
@@ -430,9 +449,7 @@ static int uri_append_normalized_path(char* output, size_t capacity,
     size_t index = 0u;
     size_t start = 0u;
     int absolute = path.size != 0u && path.data[0] == '/';
-    int trailing_separator = path.size != 0u &&
-                             (path.data[path.size - 1u] == '/' ||
-                              path.data[path.size - 1u] == '.');
+    int trailing_separator = uri_path_has_trailing_separator(path);
     if (absolute && !uri_append(output, capacity, written, '/')) return 0;
     while (index <= path.size) {
         if (index != path.size && path.data[index] != '/') {
