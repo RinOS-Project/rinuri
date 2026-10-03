@@ -61,7 +61,7 @@ static int uri_component_valid(const char* value, size_t size,
         if (byte == 0u || byte >= 0x80u || byte <= 0x20u || byte == 0x7fu)
             return 0;
         if (byte == (unsigned char)'%') {
-            if (index + 2u >= size ||
+            if (size - index < 3u ||
                 !uri_hex((unsigned char)value[index + 1u]) ||
                 !uri_hex((unsigned char)value[index + 2u]))
                 return 0;
@@ -169,14 +169,14 @@ static int uri_ipv6_valid(const char* value, size_t size)
     for (index = 0u; index < size; ++index) {
         if (value[index] == '%') {
             size_t zone;
-            if (index + 3u >= size || value[index + 1u] != '2' ||
+            if (size - index < 4u || value[index + 1u] != '2' ||
                 value[index + 2u] != '5' ||
                 !uri_ipv6_address_valid(value, index))
                 return 0;
             for (zone = index + 3u; zone < size; ++zone) {
                 const unsigned char byte = (unsigned char)value[zone];
                 if (byte == '%') {
-                    if (zone + 2u >= size ||
+                    if (size - zone < 3u ||
                         !uri_hex((unsigned char)value[zone + 1u]) ||
                         !uri_hex((unsigned char)value[zone + 2u]))
                         return 0;
@@ -202,7 +202,7 @@ static int uri_host_valid(const char* value, size_t size,
         const unsigned char byte = (unsigned char)value[index];
         if (byte == (unsigned char)'.') has_dot = 1;
         if (byte == (unsigned char)'%') {
-            if (index + 2u >= size ||
+            if (size - index < 3u ||
                 !uri_hex((unsigned char)value[index + 1u]) ||
                 !uri_hex((unsigned char)value[index + 2u]))
                 return 0;
